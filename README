@@ -1,0 +1,104 @@
+Sparse Channel Matrix Tools
+===========================
+Copyright 2013, NICTA.  See COPYRIGHT for license details.
+
+This package contains both a sparse matrix library, and a number of tools for
+analysing large, sparse channel matrices and building them from experimental
+data supplied as a list of (integal) "input output" pairs.
+
+As far as possible, the tools operate as filters on streams of samples -
+transforming stdin to stdout.  They can thus be straightforwardly
+daisy-chained, and sample streams (which are generally very large) can be
+compressed with external tools (xz,bzip2,gzip,...).
+
+Be aware that both matrix generation and error simulation are
+memory-intensive.  A 0.25% dense 250000 x 65536 matrix occupies ~300MB in
+sparse format, but building it may easily require 8GB of RAM.  Likewise,
+simulation builds a large number of such matrices, and is parallelised.  To
+achieve maximum speedup, you would need 8GB of RAM per core (a medium-sized
+simulation can easily to 100GB, and consume 1000h of processor time).
+
+Basic tools:
+    * analyse
+        Reads a sample stream from stdin and prints histogram statistics.
+    * analyse_mat
+        Calculates various statistics for a channel matrix, relevant for
+        optimisation.
+    * capacity
+        Computes the Shannon capacity of the given channel matrix - the
+        greatest mutual information over all input distributions.
+    * channel_hist
+        Calculates and prints a 2D histogram of the sample stream on stdin.
+    * channel_matrix
+        Constructs a channel matrix from the sample stream given on stdin.
+    * confidence_interval.py
+        Uses the output of sample_error to estimate the confidence interval
+        for the given observed capacity.
+    * drop_samples
+        Drop a fixed number of samples for every input modulation.
+    * extract_plot
+        Generate a visualisation of the given channel matrix, suitable for
+        gnuplot `with image'.
+    * filter_samples
+        Drop malformed and out-of-range samples.
+    * row_average
+        Average the rows in the given matrix
+    * sample_error
+        Run a Monte Carlo simulation for the given matrix, to approximate the
+        distribution of capacities expected if the matrix actually had a given
+        small bandwidth.  This is used to generate confidence intervals and
+        establish the statistical precision of the experimental results.
+    * sim_max.py
+        Return the largest output of sample_error.
+    * smooth
+        Smooth the given vector by averaging samples [n-r,n+r].
+    * stride
+        Modify the internal layout of the matrix so that n columns can be
+        processed in parallel.  May improve vectorization performance.
+    * summarise
+        Present a concise summary of the given sample stream.
+
+Tools for managing an experimental corpus:
+    * experiment_stats.py
+        Present summary statistics for a corpus of experimental results,
+        stored under the given path.
+    * find_capacities.sh
+        Calculate the capacity of every matrix in the given corpus.
+    * gen_matrices.py
+        Generate all channel matrices for the corpus.
+    * make_matrix.sh
+        Generate a single matrix.
+    * make_plots.sh
+        Generate all plots.
+    * partition.py
+        Run Monte Carlo error simulations for matrices.
+
+Test and benchmarking tools:
+    * mult
+        Measure sparse multiplication speed.
+    * mvec
+        Measure underlying arithmetic speed.
+    * speed_sparse
+        Measure sparse matrix operation speed.
+    * test_hist
+        Test various aspects of the block-sparse histogram library.
+    * test_sparse
+        Test the sparse matrix library.
+
+Building
+--------
+On Linux, just type
+
+    * make
+
+and to run the test suite,
+
+    * make test
+
+Other platforms are as yet untested, but the package should build with only
+minor modifications on any UNIX-like platform.
+
+Packaged Software
+-----------------
+This package includes the dSFMT pseudorandom number generator of Saito and
+Matsumoto.  For licensing details, see dSFMT-src-2.2.1/LICENSE.txt.
