@@ -32,7 +32,7 @@ DEBUG_EXECUTABLES= test_sparse test_hist
 EXECUTABLES=speed_sparse channel_matrix analyse capacity analyse_mat \
             mult stride extract_plot sample_error channel_hist \
             summarise filter_samples drop_samples row_average \
-            smooth
+            smooth guess
 ifdef DEBUG
 EXECUTABLES+= $(DEBUG_EXECUTABLES)
 endif
@@ -101,6 +101,8 @@ test_hist: test_hist.o ${SPARSE_OBJS}
 test_hist.o: CFLAGS= -Wall -g -DDEBUG
 
 row_average: row_average.o ${SPARSE_OBJS}
+
+guess: guess.o ${SPARSE_OBJS} bayes_inference.o
 
 ### Tests
 
